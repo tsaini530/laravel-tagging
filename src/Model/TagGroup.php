@@ -48,4 +48,27 @@ class TagGroup extends Eloquent
         $this->attributes['name'] = $value;
         $this->attributes['slug'] = str_slug($value);
     }
+
+    public static function getTagModel($limit, $offset, $search, $orderby, $order) {
+        //DB::enableQueryLog();
+        $q = TagGroup::where('tagging_tag_groups.id', '!=', '')->orderby('id','desc');
+        $orderby = $orderby ? $orderby : 'id';
+        $order = $order ? $order : 'desc';
+
+        if ($search && !empty($search)) {
+            $q->where(function($query) use ($search) {
+                $query->where('name', 'LIKE', '%' . $search . '%');
+                       
+            });
+        }
+
+        $response = $q->orderBy($orderby, $order)
+                ->offset($offset)
+                ->limit($limit)
+                ->get();
+
+        $response = json_decode(json_encode($response));
+        return $response;
+    }
+
 }

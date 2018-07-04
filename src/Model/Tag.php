@@ -2,6 +2,8 @@
 
 use Conner\Tagging\Contracts\TaggingUtility;
 use Illuminate\Database\Eloquent\Model as Eloquent;
+use App\Models\GroupTagRelation;
+
 
 /**
  * Copyright (C) 2014 Robert Conner
@@ -149,4 +151,26 @@ class Tag extends Eloquent
             ->where('suggest', false)
             ->delete();
     }
+
+    public static function getTagModel($limit, $offset, $search, $orderby, $order) {
+        //DB::enableQueryLog();
+        $q = GroupTagRelation::orderby('id','desc')->with(['groupDetail', 'tagDetail']);
+        $orderby = $orderby ? $orderby : 'id';
+        $order = $order ? $order : 'desc';
+
+        /*if ($search && !empty($search)) {
+            $q->where(function($query) use ($search) {
+                $query->where('name', 'LIKE', '%' . $search . '%');
+                       
+            });
+        }*/
+
+        $response = $q->orderBy($orderby, $order)
+                ->offset($offset)
+                ->limit($limit)
+                ->get();
+
+        return $response;
+    }
+
 }
