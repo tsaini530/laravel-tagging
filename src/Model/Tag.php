@@ -154,16 +154,16 @@ class Tag extends Eloquent
 
     public static function getTagModel($limit, $offset, $search, $orderby, $order) {
         //DB::enableQueryLog();
-        $q = GroupTagRelation::orderby('id','desc')->with(['groupDetail', 'tagDetail']);
+        $q = Tag::where('id', '!=', '');
         $orderby = $orderby ? $orderby : 'id';
         $order = $order ? $order : 'desc';
 
-        /*if ($search && !empty($search)) {
+        if ($search && !empty($search)) {
             $q->where(function($query) use ($search) {
                 $query->where('name', 'LIKE', '%' . $search . '%');
                        
             });
-        }*/
+        }
 
         $response = $q->orderBy($orderby, $order)
                 ->offset($offset)
